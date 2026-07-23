@@ -11,7 +11,22 @@ namespace SiteAssistenciaTecnica.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Servicos()
+        {
+            return View();
+        }
+        
+        public IActionResult Sobre()
+        {
+            return View();
+        }
+        
+        public IActionResult Solicitar()
+        {
+            return View();
+        }
+
+        public IActionResult Forum()
         {
             return View();
         }
