@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiteAssistenciaTecnica.Models;
 using System.Diagnostics;
@@ -11,6 +12,7 @@ namespace SiteAssistenciaTecnica.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult Servicos()
         {
             return View();

@@ -15,7 +15,7 @@ namespace SiteAssistenciaTecnica.Services
 
             string role;
 
-            if (user.isAdmin.ToString() == "true")
+            if (user.isAdmin)
             {
                 role = "Admin";
             }
@@ -32,6 +32,9 @@ namespace SiteAssistenciaTecnica.Services
                     new Claim(ClaimTypes.Role, role)    
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
+                Issuer = "SiteAssistenciaTecnica",
+                Audience = "SiteAssistenciaTecnica",
+
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

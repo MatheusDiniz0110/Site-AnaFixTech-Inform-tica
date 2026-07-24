@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SiteAssistenciaTecnica;
 using SiteAssistenciaTecnica.Data;
 using SiteAssistenciaTecnica.Models;
@@ -16,16 +17,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// Nota: usamos AppDbContext (herda IdentityDbContext) para o Identity, pois AppDbContext
-// já está registrado com AddDbContext<AppDbContext>(...).
 builder.Services.AddControllersWithViews();
 
 var key = Encoding.ASCII.GetBytes(Settings.key);
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = "JwtBearer";
-    options.DefaultChallengeScheme = "JwtBearer";
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(x =>
 {
     x.RequireHttpsMetadata = false;
@@ -33,9 +32,14 @@ builder.Services.AddAuthentication(options =>
     x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
+
         IssuerSigningKey = new SymmetricSecurityKey(key),
+
         ValidateIssuer = false,
-        ValidateAudience = false
+        ValidateAudience = false,
+
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
     };
 });
 
@@ -47,9 +51,6 @@ builder.Services.AddAuthorization(x =>
 
 
 var app = builder.Build();
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapPost("/login", (User model) =>
 {
@@ -85,6 +86,7 @@ else
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
