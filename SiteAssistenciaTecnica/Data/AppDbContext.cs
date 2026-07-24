@@ -4,7 +4,7 @@ using SiteAssistenciaTecnica.Models;
 
 namespace SiteAssistenciaTecnica.Data
 {
-    public class AppDbContext : IdentityDbContext
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
