@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SiteAssistenciaTecnica;
 using SiteAssistenciaTecnica.Data;
+using SiteAssistenciaTecnica.Models;
+using SiteAssistenciaTecnica.Repositories;
+using SiteAssistenciaTecnica.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,10 +18,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
+    .AddEntityFrameworkStores<AppDbContext>();
 
-var app = builder.Build();
+// Nota: usamos AppDbContext (herda IdentityDbContext) para o Identity, pois AppDbContext
+// já está registrado com AddDbContext<AppDbContext>(...).
+builder.Services.AddControllersWithViews();
 
 var key = Encoding.ASCII.GetBytes(Settings.key);
 
@@ -45,8 +49,30 @@ builder.Services.AddAuthorization(x =>
     x.AddPolicy("User", policy => policy.RequireRole("User"));
 });
 
+
+var app = builder.Build();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapPost("/login", (User model) =>
+{
+    var user = UserRepository.Get(model.Email, model.Password);
+
+    if(user == null)
+    {
+        return Results.NotFound
+        (
+            new { message = "Usuário ou senha inválidos" }
+        );
+    }
+
+    var token = TokenService.GenerateToken(user);
+
+    user.Password = "";
+    
+    return Results.Ok(new { user = user, token = token });
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

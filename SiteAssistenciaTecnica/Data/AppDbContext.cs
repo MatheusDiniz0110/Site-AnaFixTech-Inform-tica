@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SiteAssistenciaTecnica.Models;
 
 namespace SiteAssistenciaTecnica.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -13,3 +14,7 @@ namespace SiteAssistenciaTecnica.Data
         public DbSet<User> Users { get; set; }
     }
 }
+
+// OBS: Atualizamos AppDbContext para herdar IdentityDbContext.
+// Mantivemos o registro AddDbContext<AppDbContext> em Program.cs para que
+// os serviços do Identity usem esse contexto (AddEntityFrameworkStores<AppDbContext>).
