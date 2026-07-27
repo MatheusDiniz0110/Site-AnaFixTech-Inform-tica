@@ -12,7 +12,6 @@ namespace SiteAssistenciaTecnica.Controllers
             return View();
         }
 
-        [Authorize]
         public IActionResult Servicos()
         {
             return View();

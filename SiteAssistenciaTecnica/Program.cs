@@ -49,12 +49,19 @@ builder.Services.AddAuthorization(x =>
     x.AddPolicy("User", policy => policy.RequireRole("User"));
 });
 
+builder.Services.AddSession();
+builder.Services.AddHttpClient("Api", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7160");
+});
 
 var app = builder.Build();
 
-app.MapPost("/login", (User model) =>
+app.MapPost("/login", (LoginRequest model, AppDbContext context) =>
 {
-    var user = UserRepository.Get(model.Email, model.Password);
+    UserRepository userRepository = new UserRepository(context);
+
+    var user = userRepository.Get(model.Email, model.Password);
 
     if(user == null)
     {
@@ -85,6 +92,10 @@ else
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseSession();
+
+app.UseMiddleware<JwtMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
