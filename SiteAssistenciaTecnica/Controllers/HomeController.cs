@@ -1,15 +1,21 @@
-using Microsoft.AspNetCore.Authorization;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SiteAssistenciaTecnica.Data;
 using SiteAssistenciaTecnica.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace SiteAssistenciaTecnica.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly AppDbContext _context;
+        public HomeController(AppDbContext context) => _context = context;
+
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var data = await _context.HomePageInformation.FirstOrDefaultAsync();
+            return View(data);
         }
 
         public IActionResult Servicos()

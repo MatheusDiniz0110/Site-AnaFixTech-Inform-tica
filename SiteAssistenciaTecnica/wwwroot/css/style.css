@@ -236,6 +236,7 @@ button.light {
 
 
 .logo-box {
+    border-radius: 20px;
     border: 3px solid white;
     padding: 10px;
     font-size: 35px;
@@ -244,12 +245,14 @@ button.light {
 
 
 .brand-card h2 {
+    border-radius: 20px;
     margin-top: 15px;
 }
 
 
 
 .brand-card p {
+    border-radius: 20px;
     color: white;
 }
 
